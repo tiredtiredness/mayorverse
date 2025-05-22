@@ -1,0 +1,11 @@
+@import url(normalize.css);
+@import 'tailwindcss';
+
+body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.focusable {
+  @apply outline-transparent focus:outline-offset-2 focus:outline-2 focus:outline-teal-500 
+                   placeholder-gray-400 transition-[outline-color];
+}

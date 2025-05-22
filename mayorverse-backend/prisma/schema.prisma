@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  username  String  @unique
+  email     String  @unique
+  firstName String?
+  lastName  String?
+  bio       String?
+  password  String
+  avatarUrl String?
+
+  cities        City[]
+  posts         Post[]
+  votes         Vote[]
+  follows       Follow[] @relation("Follower")
+  followedUsers Follow[] @relation("FollowedUser")
+}
+
+model City {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mayorId String
+
+  name        String
+  description String?
+  map         String?
+  population  Int?
+  avatarUrl   String?
+
+  mayor   User     @relation(fields: [mayorId], references: [id])
+  tags    Tag[]
+  posts   Post[]
+  follows Follow[] @relation("FollowedCity")
+  polls   Poll[]
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cityId String?
+  postId String?
+
+  name String
+  type TagType
+
+  city City? @relation(fields: [cityId], references: [id])
+  post Post? @relation(fields: [postId], references: [id])
+
+  @@unique([type, name, cityId, postId])
+}
+
+enum TagType {
+  POST
+  CITY
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cityId String
+  userId String
+
+  name    String
+  content String
+
+  city  City   @relation(fields: [cityId], references: [id])
+  user  User   @relation(fields: [userId], references: [id])
+  tags  Tag[]
+  polls Poll[]
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  followerId String
+  follower   User    @relation("Follower", fields: [followerId], references: [id])
+  userId     String? @map("userId")
+  user       User?   @relation("FollowedUser", fields: [userId], references: [id])
+  cityId     String?
+  city       City?   @relation("FollowedCity", fields: [cityId], references: [id])
+
+  followType FollowType
+
+  // Полиморфная связь:
+  @@unique([followerId, userId], name: "user_follow")
+  @@unique([followerId, cityId], name: "city_follow")
+}
+
+enum FollowType {
+  USER
+  CITY
+}
+
+model Poll {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postId String?
+  cityId String?
+
+  name        String
+  description String?
+  endDate     DateTime?
+  isMultiple  Boolean   @default(false)
+
+  post        Post?        @relation(fields: [postId], references: [id])
+  city        City?        @relation(fields: [cityId], references: [id])
+  pollOptions PollOption[]
+  votes       Vote[]
+}
+
+model PollOption {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pollId String
+
+  name  String
+  order Int
+
+  poll  Poll   @relation(fields: [pollId], references: [id])
+  votes Vote[]
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       String
+  pollId       String
+  pollOptionId String
+
+  user       User       @relation(fields: [userId], references: [id])
+  poll       Poll       @relation(fields: [pollId], references: [id])
+  pollOption PollOption @relation(fields: [pollOptionId], references: [id])
+
+  @@unique([userId, pollId])
+}

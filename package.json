@@ -1,0 +1,9 @@
+{
+  "name": "mayorverse",
+  "scripts": {
+    "dev": "concurrently \"cd mayorverse-backend && npm run start:dev\" \"cd mayorverse-frontend && npm run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
