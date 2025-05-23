@@ -6,23 +6,36 @@ import { Textarea } from './ui/textarea';
 import { Button, Modal } from './ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postService } from '@/services/post.service';
+import { IPost } from '@/types';
 
-export function CreatePostModal({ isOpen, onClose, cityId, userId }) {
+interface ICreatePostModal {
+  isOpen: boolean;
+  onClose: () => void;
+  cityId: string;
+  userId: string;
+}
+
+export function CreatePostModal({
+  isOpen,
+  onClose,
+  cityId,
+  userId,
+}: ICreatePostModal) {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationKey: ['post'],
-    mutationFn: async formData => {
+    mutationFn: async (formData: IPost) => {
       await postService.create({ ...formData, cityId, userId });
     },
     onSuccess() {
-      queryClient.invalidateQueries(['city']);
+      queryClient.invalidateQueries({ queryKey: ['city'] });
     },
   });
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm<IPost>();
 
-  const onSubmit = formData => {
+  const onSubmit = (formData: IPost) => {
     mutate(formData);
     reset();
     onClose();

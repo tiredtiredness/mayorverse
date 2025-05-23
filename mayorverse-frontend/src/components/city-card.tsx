@@ -3,7 +3,6 @@ import { UsersGroupRounded } from '@solar-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Tag } from './ui';
-import { ITag } from '@/types';
 
 export function CityCard({
   city,
@@ -11,8 +10,8 @@ export function CityCard({
   selectedTags,
 }: {
   city: ICity;
-  onClick: (e: MouseEvent, tagName: string) => void;
-  selectedTags: string;
+  onClick?: (e: MouseEvent, tagName: string) => void;
+  selectedTags?: string[];
 }) {
   return (
     <Link
@@ -60,7 +59,7 @@ export function CityCard({
                 <Tag
                   tag={tag}
                   onClick={onClick}
-                  isSelected={selectedTags.includes(tag.name)}
+                  isSelected={selectedTags?.includes(tag.name)}
                 />
               </li>
             ))}

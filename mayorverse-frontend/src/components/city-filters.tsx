@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  ArrowUp,
-  CloseCircle,
-  Magnifer,
-  Map,
-  Tag,
-  UsersGroupRounded,
-} from '@solar-icons/react';
+import { ArrowUp, CloseCircle, Magnifer, Tag } from '@solar-icons/react';
 import { useState, useEffect } from 'react';
 
 export type CityFiltersProps = {
@@ -215,7 +208,7 @@ export function CityFilters({
         <div className='mt-3 flex flex-wrap gap-2'>
           {filters.search && (
             <span className='text-xs px-2 py-1 bg-gray-700 rounded-full flex items-center gap-1'>
-              Search: "{filters.search}"
+              Search: &#34;{filters.search}&#34;
               <button onClick={() => setFilters({ ...filters, search: '' })}>
                 <CloseCircle className='h-3 w-3' />
               </button>

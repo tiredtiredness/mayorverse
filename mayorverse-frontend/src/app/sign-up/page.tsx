@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { authService } from '@/services/auth.service';
 import { IRegisterForm } from '@/types/auth.types';
@@ -15,7 +15,8 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { register, formState, handleSubmit, watch, reset } = useForm();
+  const { register, formState, handleSubmit, watch, reset } =
+    useForm<IRegisterForm>();
 
   const { push } = useRouter();
 
@@ -28,7 +29,7 @@ export default function SignUp() {
     },
   });
 
-  const onSubmit: SubmitHandler<IRegisterForm> = data => {
+  const onSubmit = (data: IRegisterForm) => {
     mutate(data);
   };
 
@@ -46,7 +47,7 @@ export default function SignUp() {
           onSubmit={handleSubmit(onSubmit)}
           className='bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-xl p-8 shadow-lg'
         >
-          {formState.errors.form && (
+          {formState.errors.root?.message && (
             <div className='mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg flex items-center gap-2 text-red-300'>
               <Danger className='h-5 w-5' />
               <span>{formState.errors.root?.message}</span>

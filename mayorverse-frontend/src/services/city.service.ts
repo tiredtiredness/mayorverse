@@ -1,11 +1,11 @@
 import { ICity } from '@/types/city.types';
 import { getAccessToken } from './auth-token.service';
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
 
 class CityService {
   async getCities({ name, tags }: { name: string; tags: string[] }) {
     const response = await fetch(
-      `${BASE_URL}/city?name=${name}&tags=${tags.join(',')}`
+      `${API_URL}/city?name=${name}&tags=${tags.join(',')}`
     );
     const data = await response.json();
 
@@ -14,7 +14,7 @@ class CityService {
 
   async getCity(cityId: string) {
     const accessToken = getAccessToken();
-    const response = await fetch(`${BASE_URL}/city/${cityId}`, {
+    const response = await fetch(`${API_URL}/city/${cityId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ class CityService {
   async createCity(formData: ICity) {
     const accessToken = getAccessToken();
 
-    const response = await fetch(`${BASE_URL}/city`, {
+    const response = await fetch(`${API_URL}/city`, {
       method: 'POST',
       body: JSON.stringify(formData),
       credentials: 'include',
@@ -47,7 +47,7 @@ class CityService {
     console.log(formData.id);
     const accessToken = getAccessToken();
 
-    const response = await fetch(`${BASE_URL}/city/${formData.id}`, {
+    const response = await fetch(`${API_URL}/city/${formData.id}`, {
       method: 'PUT',
       body: JSON.stringify(formData),
       credentials: 'include',

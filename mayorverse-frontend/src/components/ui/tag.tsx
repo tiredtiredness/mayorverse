@@ -1,5 +1,6 @@
 import { ITag } from '@/types/tag.types';
 import { TrashBinMinimalistic } from '@solar-icons/react';
+import { MouseEvent } from 'react';
 
 export function Tag({
   tag,
@@ -12,7 +13,7 @@ export function Tag({
   onClick?: (e: MouseEvent, name: string) => void;
   isSelected: boolean;
 }) {
-  const handleClick = (e: MouseEvent) => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (onDelete) {
       onDelete(e, tag?.id);

@@ -4,19 +4,19 @@ import { Input } from './input';
 import { Tag } from './tag';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { tagService } from '@/services/tag.service';
+import { ITag } from '@/types';
 
-export function TagInput({ cityId }) {
+export function TagInput({ cityId }: { cityId: string }) {
   const [tagName, setTagName] = useState('');
 
   const { data: tags, refetch } = useQuery({
     queryKey: ['tags', cityId],
-    queryFn: async () => await tagService.getCityTags(cityId),
+    queryFn: async () => await tagService.getCityTags({ cityId }),
   });
 
   const { mutate: mutateCreation } = useMutation({
     mutationKey: ['tags', cityId],
-    mutationFn: async ({ cityId, name }) => {
-      console.log(55, cityId, name);
+    mutationFn: async ({ cityId, name }: ITag) => {
       return await tagService.createCityTag(cityId, name);
     },
     onSuccess() {

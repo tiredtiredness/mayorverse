@@ -12,7 +12,6 @@ import { useAuth } from '@/hooks/useAuth';
 const tabs = [
   {
     title: 'Favorites',
-
     icon: <Heart className='w-5 h-5' />,
     href: '/profile/favorites',
   },
@@ -78,7 +77,7 @@ export default function Profile({ children }: { children: JSX.Element }) {
                     Edit Profile
                   </Button>
                   <EditProfileModal
-                    user={user}
+                    user={user!}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
                   />
@@ -134,7 +133,7 @@ export default function Profile({ children }: { children: JSX.Element }) {
                   <Skeleton width={240} height={20} />
                 ) : (
                   <p>
-                    {new Date(user?.createdAt?.toString()).toLocaleDateString(
+                    {new Date(user!.createdAt?.toString()).toLocaleDateString(
                       'en-US',
                       {
                         day: '2-digit',

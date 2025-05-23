@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { cityService } from '@/services/city.service';
 import { CreatePollModal } from '@/components/create-poll-modal';
 import { createPortal } from 'react-dom';
+import { IPoll } from '@/types';
 
 export default function PollsTab() {
   const params = useParams();
@@ -17,7 +18,7 @@ export default function PollsTab() {
 
   const { data: city } = useQuery({
     queryKey: ['news'],
-    queryFn: async () => await cityService.getCity(params?.city),
+    queryFn: async () => await cityService.getCity(params?.city as string),
   });
 
   const modal = (
@@ -43,8 +44,8 @@ export default function PollsTab() {
       </div>
       {!!city ? (
         <div className='grid gap-4'>
-          {city?.polls?.map(poll => (
-            <Poll key={poll?.id} poll={poll} />
+          {city?.polls?.map((poll: IPoll) => (
+            <Poll key={poll?.id} />
           ))}
         </div>
       ) : (

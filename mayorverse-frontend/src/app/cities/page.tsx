@@ -9,6 +9,7 @@ import { ICity } from '@/types/city.types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CityFilters } from '@/components/city-filters';
 import { tagService } from '@/services';
+import { ITag } from '@/types';
 
 export default function Cities() {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
@@ -21,6 +22,8 @@ export default function Cities() {
     population: '',
     sortBy: '',
   });
+
+  console.log(filters);
 
   const tags = searchParams.get('tags')?.split(',') ?? [];
   const cityName = searchParams.get('name') ?? '';
@@ -77,7 +80,7 @@ export default function Cities() {
       <CityFilters
         onFilterChange={setFilters}
         availableRegions={['123', '456']}
-        availableTags={popularTags?.map(tag => tag?.name)}
+        availableTags={popularTags?.map((tag: ITag) => tag?.name)}
       />
       <ul className='grid justify-center grid-cols-1 lg:grid-cols-[repeat(3,_minmax(0,_448px))] sm:grid-cols-[repeat(2,_minmax(0,_448px))] xl:grid-cols-[repeat(4,_minmax(0,_448px))] 2xl:grid-cols-[repeat(5,_minmax(0,_448px))]  gap-4'>
         {isLoading

@@ -54,11 +54,12 @@ export default function CityLayout({
       if (isFollowingCity) {
         await followService.unfollow(cityFollow.id);
       } else {
-        await followService.follow({ followerId: user?.id, cityId: city?.id });
+        if (!user || !city) return;
+        await followService.follow({ followerId: user.id, cityId: city.id });
       }
     },
     onSuccess() {
-      queryClient.invalidateQueries(['city', `${params.city}`]);
+      queryClient.invalidateQueries({ queryKey: ['city', `${params.city}`] });
       refetch();
     },
   });
@@ -81,6 +82,8 @@ export default function CityLayout({
       icon: <MapPoint className='w-5 h-5' />,
     },
   ];
+
+  if (!city) return null;
 
   return (
     <div className='grid min-h-[calc(100dvh_-_48px_-_66px)] grid-cols-1 lg:grid-cols-4 gap-6 p-4 md:p-6 text-white'>
@@ -123,7 +126,7 @@ export default function CityLayout({
                   {city?.name}
                 </h1>
                 <p className='text-sm text-gray-300 drop-shadow-md'>
-                  {city?.tags}
+                  {city?.tags?.toString()}
                 </p>
               </div>
             </>
@@ -147,7 +150,7 @@ export default function CityLayout({
                     {city?.population?.toLocaleString()} (
                     {
                       milestones.findLast(
-                        milestone => milestone.population <= city?.population
+                        milestone => milestone.population <= city.population
                       )?.title
                     }
                     )
@@ -186,7 +189,6 @@ export default function CityLayout({
             <Button
               variant='primary'
               className='w-full'
-              icon={<Star className='w-5 h-5' />}
               disabled={isLoading}
               onClick={() => mutate()}
             >
@@ -227,15 +229,15 @@ export default function CityLayout({
                 </div>
                 <div>
                   <p className='text-sm font-medium'>{follower?.username}</p>
-                  <p className='text-xs text-gray-400'>{follower?.role}</p>
                 </div>
               </div>
             ))}
-            {city?.follows?.length > 5 && (
-              <p className='text-xs text-gray-500 text-center'>
-                +{city?.follows?.length - 5} more residents
-              </p>
-            )}
+            {city?.follows?.length !== undefined &&
+              city?.follows?.length > 5 && (
+                <p className='text-xs text-gray-500 text-center'>
+                  +{city?.follows?.length - 5} more residents
+                </p>
+              )}
           </div>
         </div>
       </aside>

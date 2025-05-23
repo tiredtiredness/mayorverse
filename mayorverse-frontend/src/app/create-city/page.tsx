@@ -2,21 +2,21 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { ICity } from '@/types/city.types';
 import { cityService } from '@/services/city.service';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
 
 export default function CreateCity() {
   const { back } = useRouter();
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm<ICity>();
 
-  const [preview, setPreview] = useState();
+  const [preview, setPreview] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const { mutate, isPending: isLoading } = useMutation({
@@ -27,17 +27,20 @@ export default function CreateCity() {
     },
   });
 
-  const onSubmit: SubmitHandler<ICity> = formData => {
+  const onSubmit = (formData: ICity) => {
     mutate({ ...formData, avatarUrl });
   };
 
-  const fpf = e => {
+  const fpf = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    const file = e.target.files[0];
-    if (file) reader.readAsDataURL(file);
+    const file = e?.target?.files?.[0];
+    if (!file) return;
+
+    reader.readAsDataURL(file);
+
     reader.onload = async readerEvent => {
       const result = readerEvent?.target?.result;
-      setPreview(result);
+      if (typeof result === 'string') setPreview(result);
       const formData = new FormData();
       formData.append('image', file);
       const responce = await fetch(`${IMAGE_API_URL}`, {

@@ -2,11 +2,18 @@ import { useForm } from 'react-hook-form';
 import { Button, Input, Modal, Textarea } from './ui';
 import { useMutation } from '@tanstack/react-query';
 import { pollService } from '@/services';
+import { IPoll } from '@/types';
 
-export function CreatePollModal({ isOpen, onClose }) {
-  const { register, handleSubmit, reset } = useForm();
+export function CreatePollModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const { register, handleSubmit, reset } = useForm<IPoll>();
 
-  const onSubmit = formData => {
+  const onSubmit = (formData: IPoll) => {
     mutate(formData);
   };
   const onCancel = () => {
@@ -16,7 +23,7 @@ export function CreatePollModal({ isOpen, onClose }) {
 
   const { mutate } = useMutation({
     mutationKey: ['poll'],
-    mutationFn: async formData => {
+    mutationFn: async (formData: IPoll) => {
       await pollService.create({
         ...formData,
         postId: 'cmajl0rt6000044rvxy0r2zhu',

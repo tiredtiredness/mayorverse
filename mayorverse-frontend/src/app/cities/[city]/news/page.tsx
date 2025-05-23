@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import { AddSquare, Calendar, PenNewSquare } from '@solar-icons/react';
+import { Calendar } from '@solar-icons/react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { cityService } from '@/services/city.service';
@@ -31,7 +31,6 @@ export default function NewsTab() {
     <CreatePostModal
       isOpen={!!isOpen}
       onClose={() => setIsOpen(false)}
-      title={'New post'}
       userId={city.mayorId}
       cityId={city.id}
     />
@@ -49,12 +48,7 @@ export default function NewsTab() {
             </p>
           </div>
           {user?.id === city?.mayorId && (
-            <Button
-              variant='primary'
-              size='sm'
-              icon={<PenNewSquare className='w-4 h-4' />}
-              onClick={() => setIsOpen(true)}
-            >
+            <Button variant='primary' size='sm' onClick={() => setIsOpen(true)}>
               Post News
             </Button>
           )}
@@ -78,11 +72,7 @@ export default function NewsTab() {
               There are no news posts for {city.name} yet. Be the first to share
               an update!
             </p>
-            <Button
-              className='mt-4'
-              variant='primary'
-              icon={<AddSquare className='w-5 h-5' />}
-            >
+            <Button className='mt-4' variant='primary'>
               Create News Post
             </Button>
           </div>

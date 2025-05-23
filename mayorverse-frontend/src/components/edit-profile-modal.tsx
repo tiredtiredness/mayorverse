@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService } from '@/services/auth.service';
 import { IUser } from '@/types/auth.types';
 import { Modal } from '@/components/ui/modal';
 import { Input } from './ui/input';
@@ -10,10 +9,9 @@ import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { useForm } from 'react-hook-form';
 import { userService } from '@/services/user.service';
-import { useAuth } from '@/hooks/useAuth';
-import { getDirtyValues } from '@/utils';
 import Image from 'next/image';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 export function EditProfileModal({
   user,
@@ -26,15 +24,17 @@ export function EditProfileModal({
 }) {
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState, setError } = useForm();
+  const { register, handleSubmit, formState, setError } = useForm<IUser>();
 
-  const [preview, setPreview] = useState(user?.avatarUrl);
+  const [preview, setPreview] = useState<
+    string | StaticImport | null | undefined
+  >(user?.avatarUrl);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl);
 
-  const { mutate, isError } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: ['profile', user?.id],
-    mutationFn: async formData => {
-      const responce = await userService.updateUser({
+    mutationFn: async (formData: IUser) => {
+      await userService.updateUser({
         ...formData,
         id: user?.id,
       });
@@ -55,13 +55,16 @@ export function EditProfileModal({
     mutate({ ...formData, avatarUrl });
   };
 
-  const fpf = e => {
+  const fpf = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    const file = e.target.files[0];
-    if (file) reader.readAsDataURL(file);
+    const file = e?.target?.files?.[0];
+    if (!file) return;
+
+    reader.readAsDataURL(file);
+
     reader.onload = async readerEvent => {
       const result = readerEvent?.target?.result;
-      setPreview(result);
+      if (typeof result === 'string') setPreview(result);
       const formData = new FormData();
       formData.append('image', file);
       const responce = await fetch(`${IMAGE_API_URL}`, {
@@ -94,7 +97,7 @@ export function EditProfileModal({
           <Input
             label={'Username'}
             {...register('username', { value: user?.username })}
-            error={formState.errors['username']?.message}
+            error={formState.errors['username']?.message as string}
           />
           <Input
             label={'First name'}

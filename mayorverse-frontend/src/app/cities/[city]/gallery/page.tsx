@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Gallery, Map, Upload, UsersGroupRounded } from '@solar-icons/react';
+import { Camera, Gallery, Map, UsersGroupRounded } from '@solar-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { cityService } from '@/services/city.service';
 import { ICity } from '@/types/city.types';
@@ -26,7 +26,7 @@ type GalleryImage = {
 };
 
 // Mock gallery data generator
-const generateMockGallery = (cityId: string): GalleryImage[] => {
+const generateMockGallery = (): GalleryImage[] => {
   return [
     {
       id: '1',
@@ -116,11 +116,11 @@ const generateMockGallery = (cityId: string): GalleryImage[] => {
 export default function GalleryTab() {
   const params = useParams();
 
-  const { data: city, isLoading } = useQuery<ICity>({
+  const { data: city } = useQuery<ICity>({
     queryKey: ['city', `${params.city}`],
     queryFn: () => cityService.getCity(params.city as string),
   });
-  const gallery = generateMockGallery(city?.id as string);
+  const gallery = generateMockGallery();
 
   if (!city) return null;
 
@@ -132,18 +132,10 @@ export default function GalleryTab() {
           <p className='text-gray-400'>Explore photos from our community</p>
         </div>
         <div className='flex gap-3'>
-          <Button
-            variant='transparent'
-            size='sm'
-            icon={<Map className='w-4 h-4' />}
-          >
+          <Button variant='transparent' size='sm'>
             Map View
           </Button>
-          <Button
-            variant='primary'
-            size='sm'
-            icon={<Upload className='w-4 h-4' />}
-          >
+          <Button variant='primary' size='sm'>
             Upload Photo
           </Button>
         </div>
@@ -152,14 +144,14 @@ export default function GalleryTab() {
       {/* Categories */}
       <div className='flex flex-wrap gap-2'>
         <Button
-          variant='ghost'
+          variant='transparent'
           size='sm'
           className='px-3 py-1 text-sm rounded-full bg-gray-800'
         >
           All Photos
         </Button>
         <Button
-          variant='ghost'
+          variant='transparent'
           size='sm'
           className='px-3 py-1 text-sm rounded-full'
         >
@@ -167,7 +159,7 @@ export default function GalleryTab() {
           Landscapes
         </Button>
         <Button
-          variant='ghost'
+          variant='transparent'
           size='sm'
           className='px-3 py-1 text-sm rounded-full'
         >
@@ -175,7 +167,7 @@ export default function GalleryTab() {
           Architecture
         </Button>
         <Button
-          variant='ghost'
+          variant='transparent'
           size='sm'
           className='px-3 py-1 text-sm rounded-full'
         >
@@ -266,18 +258,14 @@ export default function GalleryTab() {
       ) : (
         <div className='text-center py-12'>
           <div className='mx-auto w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-4'>
-            <PhotoIcon className='w-10 h-10 text-gray-600' />
+            <Camera className='w-10 h-10 text-gray-600' />
           </div>
           <h3 className='text-xl font-medium mb-2'>Gallery is empty</h3>
           <p className='text-gray-400 max-w-md mx-auto'>
             No photos have been shared yet. Be the first to upload an image of{' '}
             {city.name}!
           </p>
-          <Button
-            className='mt-4'
-            variant='primary'
-            icon={<PlusIcon className='w-5 h-5' />}
-          >
+          <Button className='mt-4' variant='primary'>
             Upload Photo
           </Button>
         </div>

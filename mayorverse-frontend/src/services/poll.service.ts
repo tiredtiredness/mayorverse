@@ -1,9 +1,9 @@
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
 import { IPoll } from '@/types';
 
 class PollService {
   async create(poll: IPoll) {
-    const response = await fetch(`${BASE_URL}/poll`, {
+    const response = await fetch(`${API_URL}/poll`, {
       method: 'POST',
       body: JSON.stringify(poll),
       credentials: 'include',

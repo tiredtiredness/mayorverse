@@ -15,7 +15,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
-  const { register, formState, handleSubmit, reset } = useForm();
+  const { register, formState, handleSubmit, reset } = useForm<ILoginForm>();
 
   const { push } = useRouter();
 

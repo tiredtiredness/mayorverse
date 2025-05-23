@@ -10,7 +10,7 @@ import { Button } from './ui/button';
 
 export function Header() {
   const path = usePathname();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -20,6 +20,7 @@ export function Header() {
       await authService.logout();
       await queryClient.invalidateQueries({ queryKey: ['profile'] });
     } catch (error) {
+      console.log(error);
       alert('Ошибка при выходе из системы.');
     }
   };

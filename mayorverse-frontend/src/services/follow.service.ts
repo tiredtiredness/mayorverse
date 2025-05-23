@@ -1,8 +1,9 @@
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
+import { IFollow } from '@/types';
 
 class FollowService {
-  async follow(follow) {
-    const response = await fetch(`${BASE_URL}/follow`, {
+  async follow(follow: Partial<IFollow>) {
+    const response = await fetch(`${API_URL}/follow`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(follow),
@@ -13,7 +14,7 @@ class FollowService {
   }
 
   async unfollow(followId: string) {
-    const response = await fetch(`${BASE_URL}/follow/${followId}`, {
+    const response = await fetch(`${API_URL}/follow/${followId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });

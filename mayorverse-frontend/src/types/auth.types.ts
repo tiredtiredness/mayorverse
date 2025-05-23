@@ -8,10 +8,11 @@ export interface IRegisterForm {
   email: string;
   password: string;
   confirmPassword: string;
+  terms: boolean;
 }
 
 export interface ILoginForm {
-  email: string;
+  username: string;
   password: string;
 }
 

@@ -9,6 +9,6 @@ export interface IPost {
   userId: string;
   name: string;
   content: string;
-  tags: ITag[];
+  tags?: ITag[];
   poll: IPoll;
 }

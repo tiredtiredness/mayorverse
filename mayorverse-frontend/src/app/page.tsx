@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { City } from '@solar-icons/react';
 
@@ -24,19 +23,9 @@ export default function Home() {
         </div>
 
         <div className='absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-teal-400 blur-sm'></div>
-        <div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.4, 0], y: [-10, 10, -10] }}
-          transition={{ duration: 5, repeat: Infinity, repeatDelay: 1 }}
-          className='absolute top-1/3 right-1/4 w-3 h-3 rounded-full bg-teal-500 blur-sm'
-        ></div>
+        <div className='absolute top-1/3 right-1/4 w-3 h-3 rounded-full bg-teal-500 blur-sm'></div>
 
-        <div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className='max-w-4xl mx-auto'
-        >
+        <div className='max-w-4xl mx-auto'>
           <div className='mb-6 flex justify-center'>
             <div className='px-4 py-1.5 rounded-full bg-teal-900/30 border border-teal-400/30 text-teal-300 text-sm flex items-center gap-2'>
               <City weight='Outline' className='w-4 h-4' />

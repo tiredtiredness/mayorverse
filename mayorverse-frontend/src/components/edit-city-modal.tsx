@@ -8,10 +8,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cityService } from '@/services/city.service';
 import { Button } from './ui/button';
 import { TagInput } from './ui/tag-input';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
 import { Textarea } from './ui/textarea';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 export function EditCityModal({
   city,
@@ -22,13 +23,13 @@ export function EditCityModal({
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }) {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<ICity>();
 
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationKey: ['city', city.id],
-    mutationFn: async formData => {
+    mutationFn: async (formData: ICity) => {
       await cityService.updateCity({ ...formData, id: city.id });
     },
     onSuccess() {
@@ -36,18 +37,23 @@ export function EditCityModal({
     },
   });
 
-  const [preview, setPreview] = useState(city?.avatarUrl);
+  const [preview, setPreview] = useState<string | StaticImport | null>(
+    city?.avatarUrl
+  );
   const [avatarUrl, setAvatarUrl] = useState(city?.avatarUrl);
 
   const onSubmit = (formData: ICity) => mutate({ ...formData, avatarUrl });
 
-  const fpf = e => {
+  const fpf = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    const file = e.target.files[0];
-    if (file) reader.readAsDataURL(file);
+    const file = e?.target?.files?.[0];
+    if (!file) return;
+
+    reader.readAsDataURL(file);
+
     reader.onload = async readerEvent => {
       const result = readerEvent?.target?.result;
-      setPreview(result);
+      if (typeof result === 'string') setPreview(result);
       const formData = new FormData();
       formData.append('image', file);
       const responce = await fetch(`${IMAGE_API_URL}`, {

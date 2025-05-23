@@ -4,11 +4,11 @@ import {
   removeFromStorage,
   saveTokenStorage,
 } from './auth-token.service';
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
 
 class AuthService {
   async register(formData: IRegisterForm) {
-    const response = await fetch(`${BASE_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       body: JSON.stringify(formData),
       credentials: 'include',
@@ -24,7 +24,7 @@ class AuthService {
   }
 
   async login(formData: ILoginForm) {
-    const response = await fetch(`${BASE_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       body: JSON.stringify(formData),
       credentials: 'include',
@@ -46,7 +46,7 @@ class AuthService {
       return null;
     }
 
-    const response = await fetch(`${BASE_URL}/user/profile`, {
+    const response = await fetch(`${API_URL}/user/profile`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ class AuthService {
   }
 
   async logout() {
-    await fetch(`${BASE_URL}/auth/logout`, {
+    await fetch(`${API_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {

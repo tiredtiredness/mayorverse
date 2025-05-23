@@ -1,3 +1,6 @@
+import { IUser } from './auth.types';
+import { ICity } from './city.types';
+
 export interface IFollow {
   id: string;
   createdAt: string;
@@ -6,6 +9,8 @@ export interface IFollow {
   userId: string;
   cityId: string;
   followerId: string;
+  follower: IUser;
+  city: ICity;
 
   followType: EnumFollowType;
 }
