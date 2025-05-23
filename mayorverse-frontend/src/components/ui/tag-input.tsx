@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { Input } from './input';
 import { Tag } from './tag';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -16,7 +16,7 @@ export function TagInput({ cityId }: { cityId: string }) {
 
   const { mutate: mutateCreation } = useMutation({
     mutationKey: ['tags', cityId],
-    mutationFn: async ({ cityId, name }: ITag) => {
+    mutationFn: async ({ cityId, name }: { cityId: string; name: string }) => {
       return await tagService.createCityTag(cityId, name);
     },
     onSuccess() {
@@ -52,11 +52,11 @@ export function TagInput({ cityId }: { cityId: string }) {
 
       <ul className='flex gap-1 flex-wrap'>
         {!!tags?.length
-          ? tags?.map(tag => (
+          ? tags?.map((tag: ITag) => (
               <li key={tag.id}>
                 <Tag
                   tag={tag}
-                  onDelete={(e: MouseEvent, id: string) => {
+                  onDelete={(e: MouseEvent<HTMLButtonElement>, id: string) => {
                     e.stopPropagation();
                     e.preventDefault();
                     mutateRemoving(id);

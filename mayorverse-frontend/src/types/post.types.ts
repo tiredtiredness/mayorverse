@@ -1,3 +1,4 @@
+import { IUser } from './auth.types';
 import { IPoll } from './poll.types';
 import { ITag } from './tag.types';
 
@@ -11,4 +12,6 @@ export interface IPost {
   content: string;
   tags?: ITag[];
   poll: IPoll;
+  imageUrl?: string;
+  user: IUser;
 }

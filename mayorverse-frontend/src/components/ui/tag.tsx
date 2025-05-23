@@ -9,9 +9,9 @@ export function Tag({
   isSelected,
 }: {
   tag: ITag;
-  onDelete?: (e: MouseEvent, id: string) => void;
-  onClick?: (e: MouseEvent, name: string) => void;
-  isSelected: boolean;
+  onDelete?: (e: MouseEvent<HTMLButtonElement>, id: string) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>, name: string) => void;
+  isSelected?: boolean;
 }) {
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

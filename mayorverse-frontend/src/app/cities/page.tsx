@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { CityCard } from '@/components/city-card';
 import { useQuery } from '@tanstack/react-query';
 import { cityService } from '@/services/city.service';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ICity } from '@/types/city.types';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { CityFilters } from '@/components/city-filters';
 import { tagService } from '@/services';
 import { ITag } from '@/types';
@@ -15,7 +15,15 @@ export default function Cities() {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  const [initialTags, setInitialTags] = useState<string[]>([]);
+  const [initialName, setInitialName] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setInitialTags(params.get('tags')?.split(',') ?? []);
+    setInitialName(params.get('name') ?? '');
+  }, []);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -24,9 +32,6 @@ export default function Cities() {
   });
 
   console.log(filters);
-
-  const tags = searchParams.get('tags')?.split(',') ?? [];
-  const cityName = searchParams.get('name') ?? '';
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,8 +57,9 @@ export default function Cities() {
   }, [selectedTags, router]);
 
   const { data: cities, isLoading } = useQuery<ICity[]>({
-    queryKey: ['cities', { tags }],
-    queryFn: () => cityService.getCities({ name: cityName, tags }),
+    queryKey: ['cities', { tags: initialTags }],
+    queryFn: () =>
+      cityService.getCities({ name: initialName, tags: initialTags }),
   });
 
   const { data: popularTags } = useQuery({
@@ -63,7 +69,10 @@ export default function Cities() {
     },
   });
 
-  const handleTagClick = (e: MouseEvent, tagName: string) => {
+  const handleTagClick = (
+    e: MouseEvent<HTMLButtonElement>,
+    tagName: string
+  ) => {
     e.stopPropagation();
     e.preventDefault();
     if (isShiftPressed) {

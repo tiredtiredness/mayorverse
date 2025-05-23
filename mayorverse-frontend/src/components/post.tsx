@@ -2,7 +2,7 @@ import { IPost } from '@/types';
 import { motion } from 'framer-motion';
 import { Button, Skeleton } from './ui';
 import Image from 'next/image';
-import { ArrowRight, Calendar } from '@solar-icons/react';
+import { Calendar } from '@solar-icons/react';
 
 export function Post({
   post,
@@ -19,9 +19,6 @@ export function Post({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className={`bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700 overflow-hidden ${
-        post?.isFeatured ? 'ring-1 ring-teal-500/30' : ''
-      }`}
     >
       {post?.imageUrl && (
         <div className='relative h-48 w-full'>
@@ -45,11 +42,6 @@ export function Post({
               {tag.name}
             </span>
           ))}
-          {post?.isFeatured && (
-            <span className='text-xs px-2 py-1 bg-teal-900/30 text-teal-400 rounded-full'>
-              Featured
-            </span>
-          )}
         </div>
         {isLoading ? (
           <Skeleton width={'100%'} height={20} />
@@ -67,8 +59,8 @@ export function Post({
             <div className='relative w-8 h-8 rounded-full overflow-hidden border border-gray-600'>
               {post?.userId && (
                 <Image
-                  src={post?.author?.name}
-                  alt={post?.author?.name}
+                  src={post.user.avatarUrl ?? ''}
+                  alt={post.user.username}
                   fill
                   className='object-cover'
                 />
@@ -76,7 +68,6 @@ export function Post({
             </div>
             <div>
               <p className='text-sm font-medium'>{post?.user?.username}</p>
-              <p className='text-xs text-gray-400'>{post?.author?.role}</p>
             </div>
           </div>
 
@@ -92,14 +83,7 @@ export function Post({
           </div>
         </div>
 
-        <Button
-          variant='outline'
-          size='sm'
-          className='mt-3 group'
-          icon={
-            <ArrowRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
-          }
-        >
+        <Button variant='secondary' size='sm' className='mt-3 group'>
           Read Full Story
         </Button>
       </div>

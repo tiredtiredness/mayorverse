@@ -3,6 +3,7 @@ import { UsersGroupRounded } from '@solar-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Tag } from './ui';
+import { MouseEvent } from 'react';
 
 export function CityCard({
   city,
@@ -10,7 +11,7 @@ export function CityCard({
   selectedTags,
 }: {
   city: ICity;
-  onClick?: (e: MouseEvent, tagName: string) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>, tagName: string) => void;
   selectedTags?: string[];
 }) {
   return (
