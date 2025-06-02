@@ -11,7 +11,7 @@ export class AuthDto {
   @IsEmail()
   email: string;
 
-  @MinLength(6, {
+  @MinLength(3, {
     message: 'Password must be at least 3 characters',
   })
   @IsString()

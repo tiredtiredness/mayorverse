@@ -1,49 +1,41 @@
 'use client';
 
-import { MouseEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CityCard } from '@/components/city-card';
-import { useQuery } from '@tanstack/react-query';
-import { cityService } from '@/services/city.service';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ICity } from '@/types/city.types';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CityFilters } from '@/components/city-filters';
-import { tagService } from '@/services';
-import { ITag } from '@/types';
+import { useCities } from '@/hooks/api/city/useCities';
+import { useTags } from '@/hooks/api/tag/useTags';
 
 export default function Cities() {
-  const [isShiftPressed, setIsShiftPressed] = useState(false);
+  const [isAltPressed, setIsAltPressed] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const router = useRouter();
 
-  const [initialTags, setInitialTags] = useState<string[]>([]);
-  const [initialName, setInitialName] = useState('');
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setInitialTags(params.get('tags')?.split(',') ?? []);
-    setInitialName(params.get('name') ?? '');
-  }, []);
+  const searchParams = useSearchParams();
+  const [tags, setTags] = useState(searchParams.get('tags')?.split(',') ?? []);
+  const cityName = searchParams.get('name') ?? '';
 
   const [filters, setFilters] = useState({
-    search: '',
-    population: '',
+    cityName: '',
     sortBy: '',
+    tags,
   });
-
-  console.log(filters);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        setIsShiftPressed(true);
+      if (e.key === 'Alt') {
+        setIsAltPressed(true);
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
+      if (e.key === 'Alt') {
+        if (!selectedTags?.length) return;
         const uniqueTags = Array.from(new Set(selectedTags));
         router.push(`/cities?tags=${uniqueTags.join(',')}`);
-        setIsShiftPressed(false);
+        setIsAltPressed(false);
         setSelectedTags([]);
       }
     };
@@ -56,26 +48,14 @@ export default function Cities() {
     };
   }, [selectedTags, router]);
 
-  const { data: cities, isLoading } = useQuery<ICity[]>({
-    queryKey: ['cities', { tags: initialTags }],
-    queryFn: () =>
-      cityService.getCities({ name: initialName, tags: initialTags }),
-  });
+  const { cities, isLoading } = useCities(cityName, tags);
 
-  const { data: popularTags } = useQuery({
-    queryKey: ['popularTags'],
-    queryFn: async () => {
-      return await tagService.getCityTags({ popular: true });
-    },
-  });
+  const { popularTags } = useTags({ popular: true });
 
-  const handleTagClick = (
-    e: MouseEvent<HTMLButtonElement>,
-    tagName: string
-  ) => {
+  const handleTagClick = (e: MouseEvent, tagName: string) => {
     e.stopPropagation();
     e.preventDefault();
-    if (isShiftPressed) {
+    if (isAltPressed) {
       setSelectedTags(prev => [...prev, tagName]);
     } else {
       router.push(`/cities?tags=${tagName}`);
@@ -88,8 +68,17 @@ export default function Cities() {
     <div className='p-4 min-h-[calc(100dvh_-_48px_-_66px)]'>
       <CityFilters
         onFilterChange={setFilters}
+        filters={filters}
+        setFilters={setFilters}
         availableRegions={['123', '456']}
-        availableTags={popularTags?.map((tag: ITag) => tag?.name)}
+        availableTags={popularTags?.map(tag => tag?.name)}
+        setTags={tags => {
+          setTags(tags.length ? tags : []);
+          router.push(
+            tags.length ? `/cities?tags=${tags.join(',')}` : `/cities`
+          );
+        }}
+        tags={tags}
       />
       <ul className='grid justify-center grid-cols-1 lg:grid-cols-[repeat(3,_minmax(0,_448px))] sm:grid-cols-[repeat(2,_minmax(0,_448px))] xl:grid-cols-[repeat(4,_minmax(0,_448px))] 2xl:grid-cols-[repeat(5,_minmax(0,_448px))]  gap-4'>
         {isLoading
@@ -97,11 +86,11 @@ export default function Cities() {
               <li key={i}>{<Skeleton width={'100%'} height={240} />}</li>
             ))
           : cities?.map(city => (
-              <li key={city.id}>
+              <li key={city.id} className='z-1'>
                 <CityCard
                   city={city}
                   onClick={handleTagClick}
-                  selectedTags={selectedTags}
+                  selectedTags={isAltPressed || isLoading ? selectedTags : tags}
                 />
               </li>
             ))}

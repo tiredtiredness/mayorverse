@@ -4,8 +4,6 @@ import { ICity } from '@/types/city.types';
 import { Modal } from './ui/modal';
 import { Input } from './ui/input';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { cityService } from '@/services/city.service';
 import { Button } from './ui/button';
 import { TagInput } from './ui/tag-input';
 import { ChangeEvent, useState } from 'react';
@@ -13,6 +11,7 @@ import Image from 'next/image';
 import { Textarea } from './ui/textarea';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { useUpdateCity } from '@/hooks/api/city/useUpdateCity';
 
 export function EditCityModal({
   city,
@@ -25,24 +24,14 @@ export function EditCityModal({
 }) {
   const { register, handleSubmit } = useForm<ICity>();
 
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationKey: ['city', city.id],
-    mutationFn: async (formData: ICity) => {
-      await cityService.updateCity({ ...formData, id: city.id });
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['city', city.id] });
-    },
-  });
+  const { updateCity } = useUpdateCity(city.id);
 
   const [preview, setPreview] = useState<string | StaticImport | null>(
     city?.avatarUrl
   );
   const [avatarUrl, setAvatarUrl] = useState(city?.avatarUrl);
 
-  const onSubmit = (formData: ICity) => mutate({ ...formData, avatarUrl });
+  const onSubmit = (formData: ICity) => updateCity({ ...formData, avatarUrl });
 
   const fpf = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();

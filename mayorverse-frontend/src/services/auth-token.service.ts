@@ -7,10 +7,9 @@ export const getAccessToken = () => {
 
 export const saveTokenStorage = (accessToken: string) => {
   Cookies.set('accessToken', accessToken, {
-    // domain: 'localhost',
-    sameSite: 'Lax',
-    // sameSite: 'none',
-    secure: false,
+    domain: process.env.CLIENT_DOMAIN,
+    sameSite: 'None',
+    secure: true,
     expires: 1,
   });
 };

@@ -4,13 +4,11 @@ import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { Calendar } from '@solar-icons/react';
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { cityService } from '@/services/city.service';
-import { ICity } from '@/types/city.types';
 import { createPortal } from 'react-dom';
 import { CreatePostModal } from '@/components/create-post-modal';
 import { useAuth } from '@/hooks/useAuth';
 import { Post } from '@/components/post';
+import { useCity } from '@/hooks/api/city/useCity';
 
 export default function NewsTab() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,10 +16,7 @@ export default function NewsTab() {
   const { city: cityId } = params;
   const { user } = useAuth();
 
-  const { data: city, isLoading } = useQuery<ICity>({
-    queryKey: ['city'],
-    queryFn: async () => await cityService.getCity(cityId as string),
-  });
+  const { city, isLoading } = useCity(cityId as string);
 
   const news = city?.posts;
 

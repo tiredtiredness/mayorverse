@@ -12,16 +12,14 @@ import {
   User,
   UsersGroupRounded,
 } from '@solar-icons/react';
-import { cityService } from '@/services/city.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ICity } from '@/types/city.types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/useAuth';
-import { followService } from '@/services/follow.service';
 import { useState } from 'react';
 import { EditCityModal } from '@/components/edit-city-modal';
 import { milestones } from '@/constants';
 import { Modal } from '@/components/ui';
+import { useCity } from '@/hooks/api/city/useCity';
+import { useCreateCityFollow } from '@/hooks/api/follow/useCreateCityFollow';
 
 export default function CityLayout({
   children,
@@ -32,37 +30,12 @@ export default function CityLayout({
 
   const { user } = useAuth();
 
-  const queryClient = useQueryClient();
-
   const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    data: city,
-    isLoading,
-    refetch,
-  } = useQuery<ICity>({
-    queryKey: ['city', `${params.city}`],
-    queryFn: () => cityService.getCity(params.city as string),
-  });
-
+  const { city, isLoading } = useCity(params.city as string);
   const cityFollow = user?.follows.find(follow => follow.cityId === city?.id);
   const isFollowingCity = !!cityFollow;
-
-  const { mutate } = useMutation({
-    mutationKey: ['follow', 'city'],
-    mutationFn: async () => {
-      if (isFollowingCity) {
-        await followService.unfollow(cityFollow.id);
-      } else {
-        if (!user || !city) return;
-        await followService.follow({ followerId: user.id, cityId: city.id });
-      }
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['city', `${params.city}`] });
-      refetch();
-    },
-  });
+  const { mutate } = useCreateCityFollow(city?.id);
 
   const tabs = [
     {

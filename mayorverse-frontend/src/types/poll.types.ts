@@ -4,11 +4,12 @@ export interface IPoll {
   updatedAt: string;
 
   postId: string;
+  cityId: string;
 
   name: string;
   description: string;
   endDate: string;
-  isAllowedMultipleChoices: boolean;
+  isMultiple: boolean;
 
   pollOptions: IPollOption[];
   votes: IVote[];
@@ -32,4 +33,7 @@ export interface IVote {
 
   userId: string;
   pollId: string;
+  pollOptionIdList: string[];
 }
+
+export type ICreateVote = Partial<IVote>;

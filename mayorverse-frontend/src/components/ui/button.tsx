@@ -9,6 +9,8 @@ const buttonVariants = {
   transparent:
     'border border-transparent text-teal-500 focus:border hover:bg-teal-700 hover:text-white hover:border-teal-700 hover:shadow-lg hover:shadow-teal-900/50',
   link: 'focusable p-1 rounded text-white',
+  danger:
+    ' bg-red-700 text-white hover:bg-red-800 hover:shadow-lg hover:shadow-red-900/50',
 };
 
 const buttonSizes = {

@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PollService } from './poll.service';
 import { CreatePollDto, UpdatePollDto } from './dto/poll.dto';
@@ -16,18 +17,18 @@ export class PollController {
 
   @Post()
   create(@Body() createPollDto: CreatePollDto) {
-    console.log(111, createPollDto);
     return this.pollService.create(createPollDto);
   }
 
   @Get()
-  findAll() {
-    return this.pollService.findAll();
+  findAll(@Query('cityId') cityId: string) {
+    console.log({ cityId });
+    return this.pollService.findAll({ cityId });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.pollService.findOne(+id);
+    return this.pollService.findOne(id);
   }
 
   @Put(':id')
@@ -37,6 +38,6 @@ export class PollController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.pollService.remove(+id);
+    return this.pollService.remove(id);
   }
 }

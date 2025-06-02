@@ -10,7 +10,6 @@ import {
   HttpCode,
   Put,
   Query,
-  ParseArrayPipe,
 } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto, UpdateCityDto } from './dto/city.dto';

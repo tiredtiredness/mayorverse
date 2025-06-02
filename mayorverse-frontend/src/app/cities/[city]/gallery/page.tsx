@@ -5,9 +5,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Camera, Gallery, Map, UsersGroupRounded } from '@solar-icons/react';
-import { useQuery } from '@tanstack/react-query';
-import { cityService } from '@/services/city.service';
-import { ICity } from '@/types/city.types';
+import { useCity } from '@/hooks/api/city/useCity';
 
 // Mock gallery data type
 type GalleryImage = {
@@ -116,10 +114,8 @@ const generateMockGallery = (): GalleryImage[] => {
 export default function GalleryTab() {
   const params = useParams();
 
-  const { data: city } = useQuery<ICity>({
-    queryKey: ['city', `${params.city}`],
-    queryFn: () => cityService.getCity(params.city as string),
-  });
+  const { city } = useCity(params.city as string);
+
   const gallery = generateMockGallery();
 
   if (!city) return null;

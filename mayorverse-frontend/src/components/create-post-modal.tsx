@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button, Modal } from './ui';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { postService } from '@/services/post.service';
 import { IPost } from '@/types';
+import { useCreatePost } from '@/hooks/api/post/useCreatePost';
 
 interface ICreatePostModal {
   isOpen: boolean;
@@ -21,22 +20,12 @@ export function CreatePostModal({
   cityId,
   userId,
 }: ICreatePostModal) {
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationKey: ['post'],
-    mutationFn: async (formData: IPost) => {
-      await postService.create({ ...formData, cityId, userId });
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['city'] });
-    },
-  });
+  const { createPost } = useCreatePost({ cityId, userId });
 
   const { register, handleSubmit, reset } = useForm<IPost>();
 
   const onSubmit = (formData: IPost) => {
-    mutate(formData);
+    createPost(formData);
     reset();
     onClose();
   };

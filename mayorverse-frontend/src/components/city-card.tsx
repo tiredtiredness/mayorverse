@@ -17,11 +17,11 @@ export function CityCard({
   return (
     <Link
       href={`/cities/${city.id}`}
-      className=' group focus:ring-0  '
+      className=' group focus:ring-0 z-0 '
       aria-label={`Visit ${city.name} city page`}
     >
       <div
-        className='relative group-focus:focusable group-focus:ring-0 
+        className='z-0 relative group-focus:focusable group-focus:ring-0 
                 text-white placeholder-gray-400  h-60 max-w-md rounded-lg overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-teal-900/50  group-hover:ring-2 group-hover:ring-teal-600/80
       transform'
       >
@@ -30,7 +30,7 @@ export function CityCard({
             src={city?.avatarUrl ?? '/images/cities/demoPic.jpeg'}
             alt={`${city?.name} city cover`}
             fill
-            className='object-cover transition-transform duration-500 '
+            className='object-cover transition-transform duration-500 z-0 '
             sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
             priority={false}
           />

@@ -17,6 +17,7 @@ export class VoteController {
 
   @Post()
   create(@Body() createVoteDto: CreateVoteDto) {
+    console.log({ createVoteDto });
     return this.voteService.create(createVoteDto);
   }
 

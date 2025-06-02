@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CloseCircle } from '@solar-icons/react';
+import { CloseCircle, CloseSquare } from '@solar-icons/react';
 
 type ModalProps = {
   isOpen: boolean;
@@ -62,7 +62,7 @@ export function Modal({
               className='focusable m-1 rounded-full hover:bg-gray-700 transition-colors hover:cursor-pointer'
               aria-label='Close'
             >
-              <CloseCircle className='w-5 h-5' />
+              <CloseSquare className='w-5 h-5' />
             </button>
           </div>
         )}

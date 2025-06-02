@@ -8,7 +8,7 @@ export function Tag({
   onClick,
   isSelected,
 }: {
-  tag: ITag;
+  tag: ITag | { name: string };
   onDelete?: (e: MouseEvent<HTMLButtonElement>, id: string) => void;
   onClick?: (e: MouseEvent<HTMLButtonElement>, name: string) => void;
   isSelected?: boolean;
@@ -21,12 +21,12 @@ export function Tag({
       onClick(e, tag?.name);
     }
   };
-  console.log(isSelected);
+
   return (
     <div
       className={`relative z-10 flex-shrink-0 text-xs group px-2 py-1 bg-gray-900/50 backdrop-blur-sm rounded-full font-medium border  ${
         isSelected
-          ? 'text-teal-500 border-teal-500'
+          ? 'text-teal-300 border-teal-300'
           : 'text-white border-teal-800'
       } active:text-teal-600 `}
     >

@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  eslint: { dirs: ['src'] },
   images: {
     domains: [
       'cdn.corenexis.com',
@@ -18,14 +17,11 @@ const nextConfig: NextConfig = {
       'i10.imageban.ru',
       'i11.imageban.ru',
     ],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.corenexis.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+  },
+  env: {
+    API_URL: process.env.API_URL,
+    IMAGE_API_URL: process.env.IMAGE_API_URL,
+    IMAGE_TOKEN: process.env.IMAGE_TOKEN,
   },
 };
 

@@ -110,25 +110,19 @@ export class AuthService {
     res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
       httpOnly: true,
       domain: this.configService.get('DOMAIN'),
-      // domain: '172.20.10.13',
-      path: '/',
       expires: expiresIn,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
     });
   }
 
   removeRefreshTokenToResponse(res: Response) {
     res.cookie(this.REFRESH_TOKEN_NAME, '', {
       httpOnly: true,
-      // domain: '172.20.10.13',
-      domain: 'localhost',
+      domain: this.configService.get('DOMAIN'),
       expires: new Date(0),
-      // path: '/',
-      secure: false,
-      // secure: true,
-      //lax if production
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
     });
   }
 }

@@ -16,12 +16,13 @@ export function Post({
   return (
     <motion.article
       key={post.id}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20, scale: 1 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
+      className='border border-gray-700 rounded-xl shadow-lg '
     >
       {post?.imageUrl && (
-        <div className='relative h-48 w-full'>
+        <div className='relative h-48 w-full '>
           <Image
             src={post?.imageUrl}
             alt={post?.name}

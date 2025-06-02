@@ -1,39 +1,29 @@
 'use client';
+
 import { MouseEvent, useState } from 'react';
 import { Input } from './input';
 import { Tag } from './tag';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { tagService } from '@/services/tag.service';
 import { ITag } from '@/types';
+import { useTags } from '@/hooks/api/tag/useTags';
+import { useCreateTag } from '@/hooks/api/tag/useCreateTag';
+import { useDeleteTag } from '@/hooks/api/tag/useDeleteTag';
 
 export function TagInput({ cityId }: { cityId: string }) {
   const [tagName, setTagName] = useState('');
 
-  const { data: tags, refetch } = useQuery({
-    queryKey: ['tags', cityId],
-    queryFn: async () => await tagService.getCityTags({ cityId }),
-  });
+  const { tags, refetch } = useTags({ cityId });
 
-  const { mutate: mutateCreation } = useMutation({
-    mutationKey: ['tags', cityId],
-    mutationFn: async ({ cityId, name }: { cityId: string; name: string }) => {
-      return await tagService.createCityTag(cityId, name);
-    },
-    onSuccess() {
+  const { createTag } = useCreateTag({
+    cityId,
+    onSuccess: () => {
       refetch();
       setTagName('');
     },
   });
 
-  const { mutate: mutateRemoving } = useMutation({
-    mutationKey: ['tags', cityId],
-    mutationFn: async (tagId: string) => {
-      console.log(tagId);
-      return await tagService.deleteCityTag(tagId);
-    },
-    onSuccess() {
-      refetch();
-    },
+  const { deleteTag } = useDeleteTag({
+    cityId,
+    onSuccess: refetch,
   });
 
   return (
@@ -45,7 +35,7 @@ export function TagInput({ cityId }: { cityId: string }) {
         onKeyDown={e => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            if (tagName.trim()) mutateCreation({ cityId, name: tagName });
+            if (tagName.trim()) createTag({ cityId, name: tagName });
           }
         }}
       />
@@ -59,7 +49,7 @@ export function TagInput({ cityId }: { cityId: string }) {
                   onDelete={(e: MouseEvent<HTMLButtonElement>, id: string) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    mutateRemoving(id);
+                    deleteTag(id);
                   }}
                 />
               </li>

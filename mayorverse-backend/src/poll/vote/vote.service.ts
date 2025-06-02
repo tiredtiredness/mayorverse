@@ -13,7 +13,10 @@ export class VoteService {
   }
 
   async findAll() {
-    return await this.prismaService.vote.findMany();
+    return await this.prismaService.vote.groupBy({
+      by: ['pollOptionId'],
+      _count: { id: true },
+    });
   }
 
   async findOne(id: string) {

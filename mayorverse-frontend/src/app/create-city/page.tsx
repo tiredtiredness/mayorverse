@@ -3,14 +3,13 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
 import { ICity } from '@/types/city.types';
-import { cityService } from '@/services/city.service';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ChangeEvent, useState } from 'react';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
+import { useCreateCity } from '@/hooks/api/city/useCreateCity';
 
 export default function CreateCity() {
   const { back } = useRouter();
@@ -19,13 +18,7 @@ export default function CreateCity() {
   const [preview, setPreview] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState('');
 
-  const { mutate, isPending: isLoading } = useMutation({
-    mutationKey: ['city'],
-    mutationFn: (formData: ICity) => cityService.createCity(formData),
-    onSuccess() {
-      reset();
-    },
-  });
+  const { mutate, isLoading } = useCreateCity({ onSuccess: reset });
 
   const onSubmit = (formData: ICity) => {
     mutate({ ...formData, avatarUrl });

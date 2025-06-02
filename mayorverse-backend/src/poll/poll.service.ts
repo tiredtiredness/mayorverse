@@ -7,7 +7,8 @@ export class PollService {
   constructor(private prismaService: PrismaService) {}
 
   create(createPollDto: CreatePollDto) {
-    const { name, description, endDate, isMultiple, postId } = createPollDto;
+    const { name, description, endDate, isMultiple, postId, cityId } =
+      createPollDto;
     const newPoll = this.prismaService.poll.create({
       data: {
         name,
@@ -15,17 +16,22 @@ export class PollService {
         endDate,
         isMultiple,
         post: { connect: { id: postId } },
+        city: { connect: { id: cityId } },
       },
     });
     return newPoll;
   }
 
-  async findAll() {
-    return await this.prismaService.poll.findMany();
+  async findAll({ cityId }: { cityId: string }) {
+    console.log({ cityId });
+    return await this.prismaService.poll.findMany({
+      where: { cityId },
+      include: { pollOptions: true, votes: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} poll`;
+  async findOne(id: string) {
+    return await this.prismaService.poll.findUnique({ where: { id } });
   }
 
   async update(id: string, updatePollDto: UpdatePollDto) {
@@ -37,7 +43,7 @@ export class PollService {
     return updatedPoll;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} poll`;
+  async remove(id: string) {
+    return await this.prismaService.poll.delete({ where: { id } });
   }
 }

@@ -1,7 +1,9 @@
 'use client';
 
-import { ArrowUp, CloseCircle, Magnifer, Tag } from '@solar-icons/react';
-import { useState, useEffect } from 'react';
+import { ArrowUp, CloseCircle, Magnifer } from '@solar-icons/react';
+import { useRef, useState } from 'react';
+import { Dropdown, Tag } from './ui';
+import { useClickOutside } from '@/hooks';
 
 export type CityFiltersProps = {
   onFilterChange: (filters: {
@@ -11,66 +13,42 @@ export type CityFiltersProps = {
     tags: string[];
     region: string;
     activity: string;
+    setTags: () => void;
   }) => void;
   initialFilters?: {
     search?: string;
     population?: string;
     sortBy?: string;
-    tags?: string[];
     region?: string;
     activity?: string;
   };
+  filters: Record<string, string | string[]>;
+  setFilters: (filters: Record<string, string>) => void;
   availableTags: string[];
   availableRegions: string[];
+  tags: string[];
+  setTags: (any) => void;
 };
 
 export function CityFilters({
   onFilterChange,
-  initialFilters,
+  filters,
+  setFilters,
   availableTags = ['historic', 'modern'],
+  tags,
+  setTags,
 }: CityFiltersProps) {
-  const [filters, setFilters] = useState({
-    search: initialFilters?.search || '',
-    population: initialFilters?.population || '',
-    sortBy: initialFilters?.sortBy || '',
-    tags: initialFilters?.tags || [],
-    region: initialFilters?.region || '',
-    activity: initialFilters?.activity || '',
-  });
-
   const [showTagSelector, setShowTagSelector] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onFilterChange(filters);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [filters, onFilterChange]);
-
-  const handleReset = () => {
-    setFilters({
-      search: '',
-      population: '',
-      sortBy: '',
-      tags: [],
-      region: '',
-      activity: '',
-    });
-  };
-
-  const toggleTag = (tag: string) => {
-    setFilters(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag],
-    }));
-  };
-
   const hasActiveFilters = Object.values(filters).some(val =>
-    Array.isArray(val) ? val.length > 0 : val !== ''
+    Array.isArray(val) ? val?.length > 0 : val !== ''
   );
+
+  const sortRef = useRef(null);
+
+  useClickOutside(sortRef, () => setIsOpenSortDropdown(false));
+
+  const [isOpenSortDropdown, setIsOpenSortDropdown] = useState(false);
 
   return (
     <div className='bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 mb-6 shadow-lg'>
@@ -117,7 +95,16 @@ export function CityFilters({
           </label>
           <div className='relative'>
             <ArrowUp className='h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none' />
-            <select
+            <Dropdown
+              options={['Popular', 'Residents', 'Newest', 'Oldest']}
+              isMultiple={false}
+              value={filters?.sortBy || 'Default'}
+              setValue={onFilterChange}
+              isOpen={isOpenSortDropdown}
+              setIsOpen={setIsOpenSortDropdown}
+              ref={sortRef}
+            />
+            {/* <select
               id='sortBy'
               className='w-full pl-10 pr-3 py-2 rounded-lg bg-gray-700 border border-gray-600 
                         focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent
@@ -132,7 +119,7 @@ export function CityFilters({
               <option value='oldest'>Oldest first</option>
               <option value='polls'>Most polls</option>
               <option value='residents'>Most residents</option>
-            </select>
+            </select> */}
           </div>
         </div>
 
@@ -147,19 +134,20 @@ export function CityFilters({
             className={`w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 
                       flex items-center justify-between transition-all duration-200
                       ${
-                        filters.tags.length > 0 ? 'text-teal-400' : 'text-white'
+                        filters?.tags?.length > 0
+                          ? 'text-teal-400'
+                          : 'text-white'
                       }`}
           >
             <div className='flex items-center gap-2 '>
-              <Tag className='h-5 w-5' />
               <span>
-                {filters.tags.length > 0
-                  ? `${filters.tags.length} selected`
+                {filters?.tags?.length > 0
+                  ? `${filters?.tags?.length} selected`
                   : 'Select tags...'}
               </span>
             </div>
             <span className='text-xs bg-gray-600 rounded-full px-2 py-0.5'>
-              {filters.tags.length}
+              {filters?.tags?.length}
             </span>
           </button>
 
@@ -173,8 +161,7 @@ export function CityFilters({
                   >
                     <input
                       type='checkbox'
-                      checked={filters.tags.includes(tag)}
-                      onChange={() => toggleTag(tag)}
+                      checked={filters?.tags?.includes(tag)}
                       className='rounded border-gray-600 text-teal-500 focus:ring-teal-500'
                     />
                     <span className='capitalize'>{tag}</span>
@@ -188,7 +175,6 @@ export function CityFilters({
         {/* Reset Button */}
         <div className='flex items-end'>
           <button
-            onClick={handleReset}
             disabled={!hasActiveFilters}
             className={`w-full py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2
                       ${
@@ -240,14 +226,23 @@ export function CityFilters({
               </button>
             </span>
           )}
-          {filters.tags.length > 0 && (
-            <span className='text-xs px-2 py-1 bg-gray-700 rounded-full flex items-center gap-1'>
-              Tags: {filters.tags.slice(0, 2).join(', ')}
-              {filters.tags.length > 2 && ` +${filters.tags.length - 2}`}
-              <button onClick={() => setFilters({ ...filters, tags: [] })}>
-                <CloseCircle className='h-3 w-3' />
-              </button>
-            </span>
+          {filters.tags?.length > 0 && (
+            <ul>
+              {filters?.tags?.map(tag => (
+                <li key={tag}>
+                  <Tag
+                    tag={{ name: tag }}
+                    onDelete={() => {
+                      console.log(
+                        tag,
+                        tags?.filter(item => item !== tag)
+                      );
+                      setTags(tags?.filter(item => item !== tag));
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}

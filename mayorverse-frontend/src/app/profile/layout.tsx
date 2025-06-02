@@ -133,14 +133,15 @@ export default function Profile({ children }: { children: JSX.Element }) {
                   <Skeleton width={240} height={20} />
                 ) : (
                   <p>
-                    {new Date(user!.createdAt?.toString()).toLocaleDateString(
-                      'en-US',
-                      {
-                        day: '2-digit',
-                        year: 'numeric',
-                        month: 'long',
-                      }
-                    )}
+                    {user?.createdAt &&
+                      new Date(user?.createdAt?.toString())?.toLocaleDateString(
+                        'en-US',
+                        {
+                          day: '2-digit',
+                          year: 'numeric',
+                          month: 'long',
+                        }
+                      )}
                   </p>
                 )}
               </div>

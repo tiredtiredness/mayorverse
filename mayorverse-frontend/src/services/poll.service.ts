@@ -15,6 +15,20 @@ class PollService {
     const data = await response.json();
     return data;
   }
+
+  async getCityPolls(cityId: string) {
+    console.log(cityId);
+    const response = await fetch(`${API_URL}/poll?cityId=${cityId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  }
 }
 
 export const pollService = new PollService();

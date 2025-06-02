@@ -1,12 +1,14 @@
 import { ICity } from '@/types/city.types';
 import { getAccessToken } from './auth-token.service';
 import { API_URL } from '@/constants';
+import { createSearchParams } from '@/utils/createSearchParams';
 
 class CityService {
   async getCities({ name, tags }: { name: string; tags: string[] }) {
     const response = await fetch(
-      `${API_URL}/city?name=${name}&tags=${tags.join(',')}`
+      `${API_URL}/city?${createSearchParams({ name, tags })}`
     );
+
     const data = await response.json();
 
     return data;
@@ -14,13 +16,15 @@ class CityService {
 
   async getCity(cityId: string) {
     const accessToken = getAccessToken();
+    
     const response = await fetch(`${API_URL}/city/${cityId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`, // Добавляем токен в заголовок Authorization
+        Authorization: `Bearer ${accessToken}`,
       },
     });
+
     const data = await response.json();
 
     return data;

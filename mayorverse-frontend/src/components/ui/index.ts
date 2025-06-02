@@ -5,3 +5,4 @@ export * from './skeleton';
 export * from './tag';
 export * from './tag-input';
 export * from './textarea';
+export * from './dropdown';

@@ -5,7 +5,7 @@ interface IInput extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   icon?: JSX.Element;
   error?: string;
-  type?: 'text' | 'password' | 'email' | 'number';
+  type?: 'text' | 'password' | 'email' | 'number' | 'datetime-local';
   showPassword?: boolean;
   setShowPassword?: (value: boolean) => void;
   placeholder?: string;
@@ -25,7 +25,7 @@ export function Input({
     <div>
       <label
         htmlFor='username'
-        className='block text-sm font-medium text-gray-300 mb-1'
+        className='block text-sm font-medium text-white mb-1'
       >
         {label}
       </label>

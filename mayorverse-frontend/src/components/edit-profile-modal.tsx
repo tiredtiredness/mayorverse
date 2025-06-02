@@ -1,17 +1,16 @@
 'use client';
 
 import { ChangeEvent, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IUser } from '@/types/auth.types';
 import { Modal } from '@/components/ui/modal';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { useForm } from 'react-hook-form';
-import { userService } from '@/services/user.service';
 import Image from 'next/image';
 import { IMAGE_API_URL, IMAGE_TOKEN } from '@/constants';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { useUpdateUser } from '@/hooks/api/user/useUpdateUser';
 
 export function EditProfileModal({
   user,
@@ -22,8 +21,6 @@ export function EditProfileModal({
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }) {
-  const queryClient = useQueryClient();
-
   const { register, handleSubmit, formState, setError } = useForm<IUser>();
 
   const [preview, setPreview] = useState<
@@ -31,28 +28,18 @@ export function EditProfileModal({
   >(user?.avatarUrl);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl);
 
-  const { mutate } = useMutation({
-    mutationKey: ['profile', user?.id],
-    mutationFn: async (formData: IUser) => {
-      await userService.updateUser({
-        ...formData,
-        id: user?.id,
-      });
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      setIsOpen(false);
-    },
-    onError(error) {
+  const { updateUser } = useUpdateUser({
+    id: user?.id,
+    onSuccess: () => setIsOpen(false),
+    onError: error =>
       setError('username', {
         type: 'validate',
         message: error.message,
-      });
-    },
+      }),
   });
 
   const onSubmit = (formData: IUser) => {
-    mutate({ ...formData, avatarUrl });
+    updateUser({ ...formData, avatarUrl });
   };
 
   const fpf = (e: ChangeEvent<HTMLInputElement>) => {

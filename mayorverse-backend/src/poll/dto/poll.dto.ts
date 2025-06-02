@@ -4,7 +4,10 @@ import { IsArray, IsString } from 'class-validator';
 
 export class CreatePollDto {
   @IsString()
-  postId: string;
+  postId?: string;
+
+  @IsString()
+  cityId?: string;
 
   @IsString()
   name: string;

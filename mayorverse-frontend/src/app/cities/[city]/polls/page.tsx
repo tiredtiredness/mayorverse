@@ -5,24 +5,27 @@ import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { AddSquare, Star } from '@solar-icons/react';
-import { useQuery } from '@tanstack/react-query';
-import { cityService } from '@/services/city.service';
 import { CreatePollModal } from '@/components/create-poll-modal';
 import { createPortal } from 'react-dom';
 import { IPoll } from '@/types';
+import { useCity } from '@/hooks/api/city/useCity';
+import { usePolls } from '@/hooks/api/poll/usePolls';
 
 export default function PollsTab() {
   const params = useParams();
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: city } = useQuery({
-    queryKey: ['news'],
-    queryFn: async () => await cityService.getCity(params?.city as string),
-  });
+  const { city } = useCity(params?.city as string);
 
-  const modal = (
-    <CreatePollModal isOpen={!!isOpen} onClose={() => setIsOpen(false)} />
+  const { polls, isLoading } = usePolls(city?.id);
+
+  const modal = city && (
+    <CreatePollModal
+      isOpen={!!isOpen}
+      onClose={() => setIsOpen(false)}
+      cityId={city.id}
+    />
   );
 
   return (
@@ -44,8 +47,8 @@ export default function PollsTab() {
       </div>
       {!!city ? (
         <div className='grid gap-4'>
-          {city?.polls?.map((poll: IPoll) => (
-            <Poll key={poll?.id} />
+          {polls?.map((poll: IPoll) => (
+            <Poll key={poll?.id} poll={poll} isLoading={isLoading} />
           ))}
         </div>
       ) : (
