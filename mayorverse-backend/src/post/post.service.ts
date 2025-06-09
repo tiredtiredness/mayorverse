@@ -17,26 +17,52 @@ export class PostService {
     return newPost;
   }
 
-  async findAll() {
+  async findAll({ cityId, userId }: { cityId: string; userId: string }) {
+    console.log({ cityId });
     const posts = await this.prismaService.post.findMany({
-      include: { user: { select: { username: true } } },
+      where: { cityId },
+      include: {
+        user: true,
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
+        likes: { where: { userId } },
+      },
+      orderBy: { createdAt: 'desc' },
     });
-    console.log(posts);
-    return posts;
+
+    return posts.map((post) => ({
+      ...post,
+      isLiked: post.likes.length > 0,
+      likesCount: post._count.likes,
+      commentsCount: post._count.comments,
+    }));
   }
 
-  async findOne(id: string) {
-    return this.prismaService.post.findUnique({
-      where: { id },
-      include: { user: true },
+  async findOne({ postId, userId }: { postId: string; userId: string }) {
+    const post = await this.prismaService.post.findUnique({
+      where: { id: postId },
+      include: {
+        user: true,
+        tags: true,
+        _count: { select: { likes: true } },
+        likes: { where: { userId } },
+      },
     });
+
+    return (
+      !!post && {
+        ...post,
+        isLiked: post.likes.length > 0,
+        likesCount: post?._count.likes,
+      }
+    );
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
     const { name, content } = updatePostDto;
     const updatedPost = await this.prismaService.post.update({
-      data: { name, content },
       where: { id },
+      data: { name, content },
     });
     return updatedPost;
   }

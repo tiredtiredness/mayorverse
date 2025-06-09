@@ -7,17 +7,19 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { VoteService } from './vote.service';
 import { CreateVoteDto, UpdateVoteDto } from './dto/create-vote.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('vote')
 export class VoteController {
   constructor(private readonly voteService: VoteService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createVoteDto: CreateVoteDto) {
-    console.log({ createVoteDto });
     return this.voteService.create(createVoteDto);
   }
 
@@ -32,11 +34,13 @@ export class VoteController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   update(@Param('id') id: string, @Body() updateVoteDto: UpdateVoteDto) {
     return this.voteService.update(id, updateVoteDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.voteService.remove(id);
   }

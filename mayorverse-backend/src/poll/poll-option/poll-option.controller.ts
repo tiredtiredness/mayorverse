@@ -6,18 +6,21 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { PollOptionService } from './poll-option.service';
 import {
   CreatePollOptionDto,
   UpdatePollOptionDto,
 } from './dto/poll-option.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('poll-option')
 export class PollOptionController {
   constructor(private readonly pollOptionService: PollOptionService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createPollOptionDto: CreatePollOptionDto) {
     return this.pollOptionService.create(createPollOptionDto);
   }
@@ -33,6 +36,7 @@ export class PollOptionController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updatePollOptionDto: UpdatePollOptionDto,
@@ -41,6 +45,7 @@ export class PollOptionController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.pollOptionService.remove(id);
   }

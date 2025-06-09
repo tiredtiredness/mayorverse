@@ -1,11 +1,11 @@
-import { pollService } from '@/services';
-import { useQuery } from '@tanstack/react-query';
+import {pollService} from "@/services";
+import {useQuery} from "@tanstack/react-query";
 
-export function usePolls(cityId) {
-  const { data: polls, isLoading } = useQuery({
-    queryKey: ['polls', cityId],
+export function usePolls(cityId: string) {
+  const {data: polls, isLoading} = useQuery({
+    queryKey: ["polls", cityId],
     queryFn: async () => await pollService.getCityPolls(cityId),
   });
 
-  return { polls, isLoading };
+  return {polls, isLoading};
 }

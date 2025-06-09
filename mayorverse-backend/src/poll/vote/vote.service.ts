@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class VoteService {
   constructor(private prismaService: PrismaService) {}
+
   async create(createVoteDto: CreateVoteDto) {
     const newVote = await this.prismaService.vote.create({
       data: createVoteDto,
@@ -26,7 +27,7 @@ export class VoteService {
   async update(id: string, updateVoteDto: UpdateVoteDto) {
     const { pollOptionId, userId, pollId } = updateVoteDto;
     const updatedVote = await this.prismaService.vote.update({
-      where: { id },
+      where: { id, userId, pollId },
       data: { pollOptionId },
     });
     return updatedVote;

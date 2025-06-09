@@ -1,39 +1,32 @@
-export interface IPoll {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
+import {TBase} from "./base.types";
 
+export type TPoll = TBase & {
   postId: string;
   cityId: string;
-
   name: string;
   description: string;
   endDate: string;
   isMultiple: boolean;
+  pollOptions: TPollOption[];
+  votes: TVote[];
+};
 
-  pollOptions: IPollOption[];
-  votes: IVote[];
-}
-
-export interface IPollOption {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-
+export type TPollOption = TBase & {
   pollId: string;
-
   name: string;
   order: number;
-}
+};
 
-export interface IVote {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-
+export type TVote = TBase & {
   userId: string;
   pollId: string;
-  pollOptionIdList: string[];
-}
+  pollOptionId: string;
+};
 
-export type ICreateVote = Partial<IVote>;
+export type TCreatePoll = Omit<TPoll, keyof TBase | "votes" | "pollOptions">;
+
+export type TCreateVote = {
+  userId: string;
+  pollId: string;
+  pollOptionIdList: string[]
+};

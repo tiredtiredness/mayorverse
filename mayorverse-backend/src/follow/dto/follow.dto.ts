@@ -1,9 +1,11 @@
 import { IsEnum, IsString } from 'class-validator';
 
-enum EnumFollowType {
-  'CITY',
-  'USER',
-}
+const FollowType = {
+  USER: 'USER',
+  CITY: 'CITY',
+} as const;
+
+export type FollowType = (typeof FollowType)[keyof typeof FollowType];
 
 export class CreateFollowDto {
   @IsString()
@@ -15,6 +17,6 @@ export class CreateFollowDto {
   @IsString()
   followerId: string;
 
-  @IsEnum(['USER', 'CITY'])
-  followType: 'USER' | 'CITY';
+  @IsEnum(FollowType)
+  followType: FollowType;
 }

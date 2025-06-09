@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class FollowService {
   constructor(private prismaService: PrismaService) {}
+
   async create(createFollowDto: CreateFollowDto) {
     const { cityId, followerId, userId } = createFollowDto;
     const newFollow = await this.prismaService.follow.create({
@@ -28,9 +29,9 @@ export class FollowService {
   }
 
   async remove(id: string) {
-    const deletedFollow = await this.prismaService.follow.delete({
+    await this.prismaService.follow.delete({
       where: { id },
     });
-    return deletedFollow;
+    return true;
   }
 }

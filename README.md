@@ -2,6 +2,8 @@
 
 **A virtual space where mayors from Cities: Skylines share their accomplishments and the community participates in their development!**
 
+---
+
 ## 🖼 Interface Screenshots
 
 ### 1. Homepage

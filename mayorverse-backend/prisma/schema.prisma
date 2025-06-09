@@ -29,8 +29,10 @@ model User {
   cities        City[]
   posts         Post[]
   votes         Vote[]
-  follows       Follow[] @relation("Follower")
-  followedUsers Follow[] @relation("FollowedUser")
+  follows       Follow[]  @relation("Follower")
+  followedUsers Follow[]  @relation("FollowedUser")
+  likes         Like[]
+  comments       Comment[]
 }
 
 model City {
@@ -51,6 +53,7 @@ model City {
   posts   Post[]
   follows Follow[] @relation("FollowedCity")
   polls   Poll[]
+  likes   Like[]
 }
 
 model Tag {
@@ -86,10 +89,12 @@ model Post {
   name    String
   content String
 
-  city  City   @relation(fields: [cityId], references: [id])
-  user  User   @relation(fields: [userId], references: [id])
-  tags  Tag[]
-  polls Poll[]
+  city    City      @relation(fields: [cityId], references: [id])
+  user    User      @relation(fields: [userId], references: [id])
+  tags    Tag[]
+  polls   Poll[]
+  likes   Like[]
+  comments Comment[]
 }
 
 model Follow {
@@ -114,6 +119,47 @@ model Follow {
 enum FollowType {
   USER
   CITY
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  likeType LikeType
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  postId    String?
+  post      Post?   @relation(fields: [postId], references: [id])
+  cityId    String?
+  city      City?   @relation(fields: [cityId], references: [id])
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+}
+
+enum LikeType {
+  POST
+  CITY
+  COMMENT
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content String
+
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  postId   String
+  post     Post     @relation(fields: [postId], references: [id])
+  parentId String?
+  parent   Comment? @relation("Comment Replies", fields: [parentId], references: [id])
+
+  likes   Like[]
+  replies Comment[] @relation("Comment Replies")
 }
 
 model Poll {

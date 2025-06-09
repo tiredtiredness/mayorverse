@@ -1,32 +1,39 @@
-import { API_URL } from '@/constants';
-import { IPoll } from '@/types';
+import {API_URL} from "@/constants";
+import {TCreatePoll, TPoll} from "@/types";
+import {getAccessToken} from "@/services/auth-token.service";
 
 class PollService {
-  async create(poll: IPoll) {
+  async create(poll: TCreatePoll) {
+    const accessToken = getAccessToken();
+
+    if (!accessToken) {
+      return null;
+    }
+
     const response = await fetch(`${API_URL}/poll`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(poll),
-      credentials: 'include',
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    const data = await response.json();
+    const data: TPoll = await response.json();
     return data;
   }
 
   async getCityPolls(cityId: string) {
-    console.log(cityId);
     const response = await fetch(`${API_URL}/poll?cityId=${cityId}`, {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
-    const data = await response.json();
+    const data: TPoll[] = await response.json();
     return data;
   }
 }

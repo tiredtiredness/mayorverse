@@ -23,7 +23,6 @@ export class PollService {
   }
 
   async findAll({ cityId }: { cityId: string }) {
-    console.log({ cityId });
     return await this.prismaService.poll.findMany({
       where: { cityId },
       include: { pollOptions: true, votes: true },

@@ -5,20 +5,21 @@ import {
   Body,
   Param,
   Delete,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { CreateFollowDto } from './dto/follow.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('follow')
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
   // @Auth()
-  @HttpCode(200)
   @Post()
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createFollowDto: CreateFollowDto) {
     return this.followService.create(createFollowDto);
   }
@@ -34,6 +35,7 @@ export class FollowController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.followService.remove(id);
   }

@@ -1,4 +1,4 @@
-export interface ITag {
+export type TTag = {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -7,10 +7,17 @@ export interface ITag {
   postId: string;
 
   name: string;
-  type: EnumTagType;
-}
+  type: TTagType;
+};
 
-enum EnumTagType {
-  Post = 'POST',
-  City = 'CITY',
-}
+export type TCreateTag = {
+  name: string;
+  cityId: string;
+};
+
+const TTagType = {
+  POST: "POST",
+  CITY: "CITY",
+} as const;
+
+export type TTagType = (typeof TTagType)[keyof typeof TTagType];

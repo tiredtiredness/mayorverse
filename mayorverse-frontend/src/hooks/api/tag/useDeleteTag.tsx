@@ -1,5 +1,5 @@
-import { tagService } from '@/services';
-import { useMutation } from '@tanstack/react-query';
+import { tagService } from "@/services";
+import { useMutation } from "@tanstack/react-query";
 
 export function useDeleteTag({
   cityId,
@@ -9,9 +9,9 @@ export function useDeleteTag({
   onSuccess: () => void;
 }) {
   const { mutate: deleteTag } = useMutation({
-    mutationKey: ['tags', cityId],
+    mutationKey: ["tags", cityId],
     mutationFn: async (id: string) => {
-      return await tagService.deleteCityTag(id);
+      return await tagService.deleteTag(id);
     },
     onSuccess,
   });

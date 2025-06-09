@@ -1,52 +1,72 @@
-import { API_URL } from '@/constants';
-import { getAccessToken } from './auth-token.service';
+import {API_URL} from "@/constants";
+import {getAccessToken} from "./auth-token.service";
+import {createSearchParams} from "@/utils/createSearchParams";
 
 class TagService {
-  async getCityTags({
-    cityId,
-    popular,
-  }: {
+  async getTags({
+                  cityId,
+                  postId,
+                  popular,
+                }: {
     cityId?: string;
+    postId?: string;
     popular?: boolean;
   }) {
-    const responce = await fetch(
-      `${API_URL}/tag?cityId=${cityId}&popular=${popular}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    const data = await responce.json();
+    const params = createSearchParams({cityId, postId, popular});
+    const response = await fetch(`${API_URL}/tag?${params}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
 
     return data;
   }
 
-  async createCityTag(cityId: string, name: string) {
+  async createTag({
+                    cityId,
+                    postId,
+                    name,
+                  }: {
+    cityId?: string;
+    postId?: string;
+    name: string;
+  }) {
     const accessToken = getAccessToken();
-    console.log(11111, cityId, name);
-    const responce = await fetch(`${API_URL}/tag?cityId=${cityId}`, {
-      method: 'POST',
-      body: JSON.stringify({ cityId, name }),
-      credentials: 'include',
+
+    if (!accessToken) {
+      return null;
+    }
+
+    const response = await fetch(`${API_URL}/tag`, {
+      method: "POST",
+      body: JSON.stringify({cityId, postId, name}),
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    return await responce.json();
+    return await response.json();
   }
 
-  async deleteCityTag(tagId: string) {
-    const responce = await fetch(`${API_URL}/tag/${tagId}`, {
-      method: 'DELETE',
+  async deleteTag(tagId: string) {
+    const accessToken = getAccessToken();
+
+    if (!accessToken) {
+      return null;
+    }
+
+    const response = await fetch(`${API_URL}/tag/${tagId}`, {
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
     });
-    return await responce.json();
+    return await response.json();
   }
 }
 

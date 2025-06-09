@@ -14,6 +14,7 @@ export const saveTokenStorage = (accessToken: string) => {
   });
 };
 
+
 export const removeFromStorage = () => {
   Cookies.remove('accessToken');
 };

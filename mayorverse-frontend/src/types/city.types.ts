@@ -1,23 +1,28 @@
-import { IUser } from './auth.types';
-import { IFollow } from './follow.type';
-import { IPoll } from './poll.types';
-import { IPost } from './post.types';
-import { ITag } from './tag.types';
+import {TUser} from "./auth.types";
+import {TBase} from "./base.types";
+import {TFollow} from "./follow.types";
+import {TPoll} from "./poll.types";
+import {TPost} from "./post.types";
+import {TTag} from "./tag.types";
 
-export interface ICity {
-  tags?: ITag[];
-  id: string;
-  createdAt: string;
-  updatedAt: string;
+export type TCity = TBase & {
+  tags?: TTag[];
   name: string;
   description: string;
   map: string | null;
   population: number;
   avatarUrl: string | null;
   mayorId: string;
-  posts: IPost[];
-  follows?: IFollow[];
-  _count: { follows: number };
-  mayor: IUser;
-  polls: IPoll[];
-}
+  posts: TPost[];
+  follows?: TFollow[];
+  followersCount: number;
+  mayor: TUser;
+  polls: TPoll[];
+};
+
+export type TCreateCity = {
+  name: string;
+  description: string;
+  population: string;
+  avatarUrl: string;
+};

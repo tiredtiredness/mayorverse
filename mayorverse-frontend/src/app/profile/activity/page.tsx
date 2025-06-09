@@ -1,11 +1,11 @@
-import { Programming } from '@solar-icons/react/ssr';
+import { Programming } from "@solar-icons/react/ssr";
 
 export default function ActivityPage() {
   return (
-    <div className='space-y-4'>
-      <div className='text-center py-12'>
+    <div className="space-y-4">
+      <div className="text-center py-12">
         <Programming />
-        <h3 className='text-xl font-medium mb-2'>This page is developing</h3>
+        <h3 className="text-xl font-medium mb-2">This page is developing</h3>
       </div>
       {/* {recentActivity.length > 0 ? (
         recentActivity.map((activity, i) => (

@@ -18,27 +18,23 @@ import { UpdateUserDto } from './dto/user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('profile') // Путь к эндпоинту, например /user/profile или /user/me
-  @HttpCode(200) // HTTP-статус 200 (OK)
-  @UseGuards(AuthGuard('jwt')) // Защищаем этот эндпоинт с помощью JWT Guard
-  // Используем декоратор @User('id'), чтобы получить ID пользователя из запроса
+  @Get('profile')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
   async getProfile(@CurrentUser('id') userId: string) {
-    // Guard уже проверил токен и прикрепил user к запросу.
-    // @User('id') извлек req.user.id (или req.user.sub, в зависимости от вашей стратегии и декоратора).
-    // Теперь вызываем метод сервиса для получения профиля по этому ID.
-    return this.userService.getProfile(userId); // Используем метод getProfile из сервиса
+    return this.userService.getProfile(userId);
   }
 
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
   @Get(':id')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
   async findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
   @Get()
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
   findMany() {
     return this.userService.findAll();
   }

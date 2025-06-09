@@ -1,48 +1,39 @@
-import { pollService } from '@/services';
-import { pollOptionService } from '@/services/pollOption.service';
-import { IPoll } from '@/types';
-import { useMutation } from '@tanstack/react-query';
+import {pollService} from "@/services";
+import {pollOptionService} from "@/services/pollOption.service";
+import {useMutation} from "@tanstack/react-query";
+import {TCreatePoll} from "@/types";
 
 export function useCreatePoll({
-  postId,
-  cityId,
-  onSuccess,
-}: {
-  postId: string;
-  cityId: string;
+                                onSuccess,
+                              }: {
   onSuccess: () => void;
 }) {
-  const { mutate: createPollOptions, isPending: isCreatingOptions } =
+  const {mutate: createPollOptions, isPending: isCreatingOptions} =
     useMutation({
-      mutationKey: ['pollOption'],
+      mutationKey: ["pollOption"],
       mutationFn: async ({
-        options,
-        pollId,
-      }: {
-        options: string[];
-        pollId: string;
+                           pollOptions,
+                           pollId,
+                         }: {
+        pollOptions?: string[];
+        pollId?: string;
       }) => {
-        console.log({ pollId });
-        await pollOptionService.createOptions(options, pollId);
+        await pollOptionService.createOptions(pollOptions, pollId);
       },
     });
 
-  const { mutate: createPoll, isPending: isCreatingPoll } = useMutation({
-    mutationKey: ['poll'],
-    mutationFn: async ({ formData, options }) => {
-      // Сначала создаем опрос
-      const createdPoll = await pollService.create({
-        ...formData,
-        postId,
-        cityId,
-      });
+  const {mutate: createPoll, isPending: isCreatingPoll} = useMutation({
+    mutationKey: ["poll"],
+    mutationFn: async ({
+                         formData,
+                         pollOptions
+                       }: { formData: TCreatePoll, pollOptions: string[] }) => {
+      const createdPoll = await pollService.create(formData);
 
-      console.log({ formData, options });
-
-      if (options && options?.length > 0) {
+      if (pollOptions && pollOptions?.length > 0) {
         createPollOptions({
-          options,
-          pollId: createdPoll.id,
+          pollOptions,
+          pollId: createdPoll?.id,
         });
       }
 

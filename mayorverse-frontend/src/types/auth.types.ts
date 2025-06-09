@@ -1,39 +1,37 @@
-import { ICity } from './city.types';
-import { IFollow } from './follow.type';
-import { IVote } from './poll.types';
-import { IPost } from './post.types';
+import { TBase } from "./base.types";
+import { TCity } from "./city.types";
+import { TFollow } from "./follow.types";
+import { TVote } from "./poll.types";
+import { TPost } from "./post.types";
 
-export interface IRegisterForm {
+export type TRegisterForm = {
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
   terms: boolean;
-}
+};
 
-export interface ILoginForm {
+export type TLoginForm = {
   username: string;
   password: string;
-}
+};
 
-export interface IUser {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
+export type TUser = TBase & {
   username: string;
   email: string;
   firstName: string | undefined;
   lastName: string | undefined;
   bio: string | undefined;
   avatarUrl: string | undefined;
-  cities: ICity[];
-  posts: IPost[];
-  votes: IVote[];
-  follows: IFollow[];
-  followedUsers: IUser[];
-}
+  cities: TCity[];
+  posts: TPost[];
+  votes: TVote[];
+  follows: TFollow[];
+  followedUsers: TUser[];
+};
 
-export interface IAuthResponse {
+export type TAuthResponse = {
   accessToken: string;
-  user: IUser;
-}
+  user: TUser;
+};

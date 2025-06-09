@@ -1,81 +1,81 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
-import { authService } from '@/services/auth.service';
-import { ILoginForm } from '@/types/auth.types';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { Danger, Lock, User } from '@solar-icons/react';
+import {useState} from "react";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {Input} from "@/components/ui/input";
+import {authService} from "@/services/auth.service";
+import {TLoginForm} from "@/types/auth.types";
+import {useMutation} from "@tanstack/react-query";
+import {useRouter} from "next/navigation";
+import {Danger, Lock, User} from "@solar-icons/react";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const { register, formState, handleSubmit, reset } = useForm<ILoginForm>();
+  const {register, formState, handleSubmit, reset} = useForm<TLoginForm>();
 
-  const { push } = useRouter();
+  const {push} = useRouter();
 
-  const { mutate, isPending: isLoading } = useMutation({
-    mutationKey: ['user', 'profile'],
-    mutationFn: (formData: ILoginForm) => authService.login(formData),
+  const {mutate, isPending: isLoading} = useMutation({
+    mutationKey: ["user", "profile"],
+    mutationFn: (formData: TLoginForm) => authService.login(formData),
     onSuccess() {
       reset();
-      push('/profile');
+      push("/profile");
     },
     onError(error) {
       setError(error.message);
     },
   });
 
-  const onSubmit: SubmitHandler<ILoginForm> = data => {
+  const onSubmit: SubmitHandler<TLoginForm> = (data) => {
     mutate(data);
   };
 
   return (
-    <div className='min-h-[calc(100dvh_-_48px_-_66px)] flex items-center justify-center p-4'>
-      <div className='w-full max-w-md'>
-        <div className='text-center mb-8'>
-          <h1 className='text-3xl font-bold text-white mb-2'>Welcome back</h1>
-          <p className='text-gray-400'>Sign in to your account to continue</p>
+    <div className="min-h-[calc(100dvh_-_48px_-_66px)] flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+          <p className="text-gray-400">Sign in to your account to continue</p>
         </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className='bg-gray-800/60 w-md backdrop-blur-sm border border-gray-700 rounded-xl p-8 shadow-lg'
+          className="bg-gray-800/60 w-md backdrop-blur-sm border border-gray-700 rounded-xl p-8 shadow-lg"
         >
           {error && (
-            <div className='mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg flex items-center gap-2 text-red-300'>
-              <Danger className='h-5 w-5' />
+            <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg flex items-center gap-2 text-red-300">
+              <Danger className="h-5 w-5" />
               <span>{error}</span>
             </div>
           )}
 
-          <div className='space-y-5'>
+          <div className="space-y-5">
             <Input
-              label='Username'
-              icon={<User className='h-5 w-5 text-gray-500' />}
+              label="Username"
+              icon={<User className="h-5 w-5 text-gray-500" />}
               error={formState.errors.username?.message?.toString()}
-              {...register('username', {
-                required: 'This field is required',
+              {...register("username", {
+                required: "This field is required",
               })}
-              placeholder='citybuilder85'
-              autoComplete='username'
+              placeholder="citybuilder85"
+              autoComplete="username"
             />
 
             <Input
-              label='Password'
-              type={showPassword ? 'text' : 'password'}
+              label="Password"
+              type={showPassword ? "text" : "password"}
               showPassword={showPassword}
               setShowPassword={setShowPassword}
-              icon={<Lock className='h-5 w-5 text-gray-500' />}
+              icon={<Lock className="h-5 w-5 text-gray-500" />}
               error={formState.errors.password?.message?.toString()}
-              {...register('password', { required: 'This field is required' })}
-              placeholder='••••••••'
-              autoComplete='current-password'
+              {...register("password", {required: "This field is required"})}
+              placeholder="••••••••"
+              autoComplete="current-password"
             />
 
             {/* <div className='flex items-center justify-between'>
@@ -105,10 +105,10 @@ export default function Login() {
             </div> */}
 
             <Button
-              type='submit'
-              variant='primary'
-              size='lg'
-              className='w-full mt-2'
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full mt-2"
               isLoading={isLoading}
               disabled={!formState.isDirty || !formState.isValid}
             >
@@ -146,11 +146,11 @@ export default function Login() {
             </div>
           </div> */}
 
-          <p className='mt-6 text-center text-sm text-gray-400'>
-            Don&apos;t have an account?{' '}
+          <p className="mt-6 text-center text-sm text-gray-400">
+            Don&apos;t have an account?{" "}
             <Link
-              href='/sign-up'
-              className='font-medium text-teal-400 hover:text-teal-300'
+              href="/sign-up"
+              className="font-medium text-teal-400 hover:text-teal-300"
             >
               Sign up
             </Link>

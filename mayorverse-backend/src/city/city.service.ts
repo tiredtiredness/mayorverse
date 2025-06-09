@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCityDto, UpdateCityDto } from './dto/city.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { City } from '@prisma/client';
 
 @Injectable()
 export class CityService {
@@ -17,9 +18,20 @@ export class CityService {
     return city;
   }
 
-  findAll(name?: string, tags?: string[]) {
+  async findAll({
+    name,
+    tags,
+    userId,
+    isFollowing,
+  }: {
+    name?: string;
+    tags?: string[];
+    userId?: string;
+    isFollowing?: boolean;
+  }) {
+    let cities: any = [];
     if (tags?.length) {
-      return this.prismaService.city.findMany({
+      cities = await this.prismaService.city.findMany({
         where: {
           tags: { some: { name: { in: tags } } },
           name: { contains: name, mode: 'insensitive' },
@@ -31,8 +43,24 @@ export class CityService {
         },
         omit: { mayorId: true },
       });
+    } else if (isFollowing) {
+      cities = await this.prismaService.city.findMany({
+        where: {
+          follows: { some: { followerId: userId } },
+        },
+        include: {
+          mayor: { omit: { password: true } },
+          follows: true,
+          tags: true,
+          _count: { select: { follows: true } },
+        },
+        omit: { mayorId: true },
+      });
     } else {
-      return this.prismaService.city.findMany({
+      cities = await this.prismaService.city.findMany({
+        where: {
+          mayorId: userId,
+        },
         include: {
           mayor: { omit: { password: true } },
           tags: true,
@@ -41,6 +69,11 @@ export class CityService {
         omit: { mayorId: true },
       });
     }
+    return cities.map((city) => ({
+      ...city,
+      followersCount: city._count.follows,
+      _count: undefined,
+    }));
   }
 
   findOne(id: string) {
@@ -48,7 +81,7 @@ export class CityService {
       where: { id },
       include: {
         posts: {
-          include: { user: true, polls: true },
+          include: { user: true, polls: true, tags: true },
           orderBy: { createdAt: 'desc' },
         },
         mayor: true,

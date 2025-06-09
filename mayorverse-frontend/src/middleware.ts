@@ -1,30 +1,30 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import {NextResponse} from "next/server";
+import type {NextRequest} from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const { nextUrl, cookies } = request;
+  const {nextUrl, cookies} = request;
 
-  const refreshToken = cookies.get('refreshToken')?.value;
+  const refreshToken = cookies.get("refreshToken")?.value;
   const pathname = nextUrl.pathname;
 
   // Пропускаем API-маршруты и статические файлы
   if (
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/_next/') ||
-    pathname.includes('.') ||
-    pathname === '/cities'
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/_next/") ||
+    pathname.includes(".") ||
+    pathname === "/cities"
   ) {
     return NextResponse.next();
   }
-  const isAuthPage = pathname === '/login' || pathname === '/sign-up';
+  const isAuthPage = pathname === "/login" || pathname === "/sign-up";
 
   // Если пользователь авторизован и пытается попасть на страницы входа/регистрации
   if (isAuthPage && refreshToken) {
-    return NextResponse.redirect(new URL('/profile', nextUrl));
+    return NextResponse.redirect(new URL("/profile", nextUrl));
   }
   // Если пользователь не авторизован и пытается попасть на защищенные страницы
   if (!isAuthPage && !refreshToken) {
-    const loginUrl = new URL('/login', nextUrl);
+    const loginUrl = new URL("/login", nextUrl);
     // loginUrl.searchParams.set('from', pathname); // Сохраняем исходный URL
     return NextResponse.redirect(loginUrl);
   }
@@ -40,6 +40,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

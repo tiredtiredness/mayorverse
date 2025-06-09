@@ -17,32 +17,31 @@ export class TagService {
       const formattedTags = popularTags.map((item) => ({
         name: item.name,
       }));
-      console.log(popularTags, formattedTags);
+
       return formattedTags;
     }
 
-    return await this.prismaService.tag.findMany({
+    const tags = await this.prismaService.tag.findMany({
       where: { cityId },
       include: { city: true },
     });
+    return tags;
   }
 
   async create(createTagDto: CreateTagDto) {
-    return await this.prismaService.tag.create({
+    const newTag = await this.prismaService.tag.create({
       data: {
         name: createTagDto.name,
         cityId: createTagDto.cityId,
+        postId: createTagDto.postId,
         type: createTagDto.cityId ? 'CITY' : 'POST',
       },
     });
+    return newTag;
   }
 
   async findOne(id: string) {
     return await this.prismaService.tag.findUnique({ where: { id } });
-  }
-
-  async update(id: string, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
   }
 
   async remove(id: string) {
